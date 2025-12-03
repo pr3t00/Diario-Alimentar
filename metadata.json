@@ -1,0 +1,5 @@
+{
+  "name": "Diario AI",
+  "description": "A comprehensive calorie and macro tracker with exercise logging, weight projection based on TMB, and AI-powered insights.",
+  "requestFramePermissions": []
+}
