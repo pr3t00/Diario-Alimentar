@@ -201,7 +201,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
         </div>
 
         {/* Gasto Total (Soma) */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 bg-gradient-to-br from-white to-orange-50/50">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <div className="flex items-center justify-between pb-2">
             <h3 className="text-sm font-medium text-slate-500">Gasto Total</h3>
             <Flame className="h-4 w-4 text-orange-600" />
@@ -229,7 +229,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
         </div>
 
         {/* Saldo Com Exercício */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 bg-gradient-to-br from-slate-50 to-white">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
           <div className="flex items-center justify-between pb-2">
             <h3 className="text-sm font-medium text-slate-500">Saldo (Real / Com Treino)</h3>
             <Activity className={`h-4 w-4 ${stats.calorieBalance > 0 ? 'text-red-500' : 'text-green-500'}`} />
@@ -277,7 +277,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
       </div>
 
       {/* 4. AI Insight Section */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-100">
+      <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-indigo-900 flex items-center gap-2">
             <BrainCircuit className="w-5 h-5" />
