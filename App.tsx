@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, PlusCircle, Settings as SettingsIcon, Calendar, Menu, Cloud, CloudOff, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Settings as SettingsIcon, Calendar, Menu, Cloud, CloudOff, RefreshCw, CheckCircle2, AlertCircle, Square } from 'lucide-react';
 import { Dashboard } from './components/Dashboard';
 import { LogForm } from './components/LogForm';
 import { Settings } from './components/Settings';
@@ -9,14 +9,14 @@ import { fetchUserData, saveDayLog, saveUserSettings, getUserId } from './servic
 
 // Default initial state
 const DEFAULT_SETTINGS: UserSettings = {
-  tmb: 2000,
+  tmb: 2700,
   name: 'Usuário'
 };
 
 const getDefaultDateRange = (): DateRange => {
     const end = new Date();
     const start = new Date();
-    start.setDate(end.getDate() - 6); // Last 7 days
+    start.setDate(end.getDate() - 10); 
     return {
         startDate: start.toISOString().split('T')[0],
         endDate: end.toISOString().split('T')[0]
@@ -137,22 +137,24 @@ const App: React.FC = () => {
         return (
             <div className="space-y-8 animate-fade-in">
                 {/* Date Filter */}
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
-                    <h2 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
-                        <Calendar className="w-5 h-5 text-blue-500" />
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+                            <Calendar className="w-5 h-5 text-orange-500" />
+                        </div>
                         Período de Análise
                     </h2>
-                    <div className="flex gap-2 items-center">
+                    <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm border border-slate-100 gap-3">
                         <input 
                             type="date" 
-                            className="p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 transition-colors"
+                            className="bg-transparent text-sm text-slate-600 outline-none font-medium"
                             value={dateRange.startDate}
                             onChange={(e) => setDateRange({...dateRange, startDate: e.target.value})}
                         />
-                        <span className="text-slate-400">-</span>
+                        <span className="text-slate-300">-</span>
                         <input 
                             type="date" 
-                            className="p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 transition-colors"
+                            className="bg-transparent text-sm text-slate-600 outline-none font-medium"
                             value={dateRange.endDate}
                             onChange={(e) => setDateRange({...dateRange, endDate: e.target.value})}
                         />
@@ -174,7 +176,7 @@ const App: React.FC = () => {
                     <label className="text-sm font-medium text-slate-700">Data do Lançamento:</label>
                     <input 
                         type="date" 
-                        className="p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="p-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none"
                         value={selectedLogDate}
                         onChange={(e) => setSelectedLogDate(e.target.value)}
                     />
@@ -190,11 +192,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-slate-50/50">
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#FDFBF7]">
       
       {/* Mobile Header */}
       <div className="md:hidden bg-white p-4 flex justify-between items-center shadow-sm sticky top-0 z-20">
-        <span className="font-bold text-xl text-blue-600">NutriTrack AI</span>
+        <span className="font-bold text-xl text-slate-800 flex items-center gap-2">
+             <div className="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm">N</div>
+             NutriTrack
+        </span>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 text-slate-600">
             <Menu />
         </button>
@@ -202,19 +207,30 @@ const App: React.FC = () => {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed md:sticky top-0 left-0 z-10 h-full w-64 bg-white border-r border-slate-200 p-6 flex flex-col shadow-lg md:shadow-none transition-transform duration-300
+        fixed md:sticky top-0 left-0 z-10 h-screen w-64 bg-white border-r border-slate-100 p-6 flex flex-col shadow-xl md:shadow-none transition-transform duration-300
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="mb-10 hidden md:block">
-          <h1 className="text-2xl font-bold text-slate-800">NutriTrack <span className="text-blue-600">AI</span></h1>
-          <p className="text-xs text-slate-400 mt-1">Olá, {settings.name}</p>
+        {/* Logo Section */}
+        <div className="mb-10 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-orange-200">
+            N
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-slate-800 flex items-center gap-1">
+                NutriTrack <Square className="w-3 h-3 text-orange-500 fill-orange-500" />
+            </h1>
+            <p className="text-xs text-slate-400 font-medium">Olá, {settings.name}</p>
+          </div>
         </div>
 
+        {/* Nav Links */}
         <nav className="space-y-2 flex-1">
           <button
             onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
-              activeTab === 'dashboard' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              activeTab === 'dashboard' 
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-200' 
+                : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
             }`}
           >
             <LayoutDashboard className="w-5 h-5" />
@@ -224,7 +240,9 @@ const App: React.FC = () => {
           <button
             onClick={() => { setActiveTab('log'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
-              activeTab === 'log' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              activeTab === 'log' 
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-200' 
+                : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
             }`}
           >
             <PlusCircle className="w-5 h-5" />
@@ -234,7 +252,9 @@ const App: React.FC = () => {
           <button
             onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all ${
-              activeTab === 'settings' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              activeTab === 'settings' 
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-200' 
+                : 'text-slate-500 hover:bg-orange-50 hover:text-orange-600'
             }`}
           >
             <SettingsIcon className="w-5 h-5" />
@@ -242,33 +262,38 @@ const App: React.FC = () => {
           </button>
         </nav>
 
-        <div className="mt-auto pt-6 border-t border-slate-100 space-y-4">
+        {/* Bottom Section */}
+        <div className="mt-auto pt-6 space-y-6">
            {/* Sync Status Indicator */}
-           <div className={`flex items-center gap-2 px-3 py-2 rounded text-xs font-medium transition-all
-                ${syncStatus === 'syncing' ? 'bg-blue-50 text-blue-600' : ''}
-                ${syncStatus === 'saved' ? 'bg-green-50 text-green-600' : ''}
-                ${syncStatus === 'error' ? 'bg-red-50 text-red-500' : ''}
-                ${syncStatus === 'idle' ? 'text-slate-400' : ''}
+           <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all bg-orange-50
+                ${syncStatus === 'syncing' ? 'text-orange-600' : ''}
+                ${syncStatus === 'saved' ? 'text-green-600' : ''}
+                ${syncStatus === 'error' ? 'text-red-500' : ''}
+                ${syncStatus === 'idle' ? 'text-slate-500' : ''}
            `}>
                 {syncStatus === 'syncing' && <><RefreshCw className="w-3 h-3 animate-spin" /> Sincronizando...</>}
                 {syncStatus === 'saved' && <><CheckCircle2 className="w-3 h-3" /> Salvo com sucesso</>}
                 {syncStatus === 'error' && <><AlertCircle className="w-3 h-3" /> Erro ao salvar</>}
                 {syncStatus === 'idle' && (
                     isOnline 
-                    ? <><Cloud className="w-3 h-3 text-green-500" /> Nuvem Conectada</>
-                    : <><CloudOff className="w-3 h-3 text-orange-400" /> Modo Offline</>
+                    ? <><Cloud className="w-3 h-3 text-orange-500" /> Nuvem Conectada</>
+                    : <><CloudOff className="w-3 h-3 text-slate-400" /> Modo Offline</>
                 )}
            </div>
 
-           <div className="bg-blue-50 rounded-lg p-4">
-              <p className="text-xs text-blue-600 font-semibold mb-1">TMB Atual</p>
-              <p className="text-2xl font-bold text-blue-700">{settings.tmb} <span className="text-sm font-normal">kcal</span></p>
+           {/* TMB Card */}
+           <div className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-xl p-5 text-white shadow-lg shadow-orange-200">
+              <p className="text-xs font-medium text-orange-100 mb-1">TMB Atual</p>
+              <div className="flex items-baseline gap-1">
+                  <p className="text-3xl font-bold">{settings.tmb}</p>
+                  <span className="text-sm font-medium opacity-80">kcal</span>
+              </div>
            </div>
         </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-x-hidden w-full relative">
+      <main className="flex-1 p-4 md:p-8 lg:px-12 lg:py-10 overflow-x-hidden w-full relative">
         {renderContent()}
       </main>
 

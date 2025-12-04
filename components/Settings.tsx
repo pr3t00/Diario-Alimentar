@@ -29,7 +29,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, onSave }) => {
           <input
             type="text"
             required
-            className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+            className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
@@ -45,7 +45,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, onSave }) => {
               required
               min="500"
               max="5000"
-              className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+              className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all outline-none"
               value={formData.tmb}
               onChange={(e) => setFormData({ ...formData, tmb: Number(e.target.value) })}
             />
@@ -70,7 +70,7 @@ export const Settings: React.FC<SettingsProps> = ({ settings, onSave }) => {
         <div className="pt-4 border-t border-slate-100">
             <button
                 type="submit"
-                className="w-full flex items-center justify-center gap-2 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-md"
+                className="w-full flex items-center justify-center gap-2 bg-orange-500 text-white p-3 rounded-lg hover:bg-orange-600 transition-colors font-medium shadow-md shadow-orange-200"
             >
                 <Save className="w-5 h-5" />
                 Salvar Configurações

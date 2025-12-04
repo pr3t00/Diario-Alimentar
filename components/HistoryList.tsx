@@ -50,7 +50,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSel
             });
 
             return (
-              <tr key={log.date} className="hover:bg-slate-50 transition-colors">
+              <tr key={log.date} className="hover:bg-orange-50/30 transition-colors">
                 <td className="px-6 py-4 font-medium text-slate-900">
                     {new Date(log.date).toLocaleDateString('pt-BR')}
                 </td>
@@ -62,7 +62,7 @@ export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSel
                 <td className="px-6 py-4 text-right">
                   <button 
                     onClick={() => onSelectDate(log.date)}
-                    className="text-blue-600 hover:text-blue-800 p-1 hover:bg-blue-50 rounded"
+                    className="text-orange-500 hover:text-orange-700 p-1 hover:bg-orange-100 rounded"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>

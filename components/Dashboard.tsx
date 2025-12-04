@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { DayLog, UserSettings, DateRange, Macros } from '../types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Activity, Flame, Utensils, TrendingDown, TrendingUp, Sparkles, BrainCircuit, Dumbbell, BedDouble, Scale, Ban } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Defs, LinearGradient } from 'recharts';
+import { Activity, Flame, Utensils, TrendingDown, TrendingUp, Sparkles, BrainCircuit, Dumbbell, BedDouble, Scale, Zap } from 'lucide-react';
 import { generateNutritionalInsight } from '../services/geminiService';
 
 interface DashboardProps {
@@ -126,8 +126,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
           
           <div className="space-y-1 mb-3">
              <div className="flex items-center justify-between gap-4">
-                <span className="text-blue-600 font-medium flex items-center gap-1">
-                    <div className="w-2 h-2 rounded-full bg-blue-600"></div> Ingestão
+                <span className="text-blue-500 font-medium flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div> Ingestão
                 </span>
                 <span className="font-bold text-slate-700">{data.ingestao} kcal</span>
              </div>
@@ -171,43 +171,51 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
       {/* 1. Header Stats - Inputs and Outputs Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Ingestão Total */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Ingestão Total</h3>
-            <Utensils className="h-4 w-4 text-blue-500" />
+            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+                <Utensils className="h-5 w-5 text-orange-500" />
+            </div>
           </div>
           <div className="text-2xl font-bold text-slate-900">{stats.totals.calories.toLocaleString()} kcal</div>
-          <p className="text-xs text-slate-400 mt-1">Consumo de alimentos</p>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Consumo de alimentos</p>
         </div>
 
         {/* Gasto Sem Exercício (Basal) */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Gasto Sem Exercício</h3>
-            <BedDouble className="h-4 w-4 text-indigo-400" />
+            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
+                <Flame className="h-5 w-5 text-orange-500" />
+            </div>
           </div>
           <div className="text-2xl font-bold text-slate-900">{stats.totalBasalBurn.toLocaleString()} kcal</div>
-          <p className="text-xs text-slate-400 mt-1">TMB ({settings.tmb}) × {stats.daysCount} dias</p>
+          <p className="text-xs text-slate-400 mt-1 font-medium">TMB ({settings.tmb}) × {stats.daysCount} dias</p>
         </div>
 
         {/* Queima com Exercício */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Queima c/ Exercício</h3>
-            <Dumbbell className="h-4 w-4 text-orange-500" />
+            <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center">
+                <Dumbbell className="h-5 w-5 text-teal-500" />
+            </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900">{stats.totalExerciseBurn.toLocaleString()} kcal</div>
-          <p className="text-xs text-slate-400 mt-1">Atividades físicas extras</p>
+          <div className="text-2xl font-bold text-teal-500">{stats.totalExerciseBurn.toLocaleString()} kcal</div>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Atividades físicas extras</p>
         </div>
 
         {/* Gasto Total (Soma) */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Gasto Total</h3>
-            <Flame className="h-4 w-4 text-orange-600" />
+            <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                <Activity className="h-5 w-5 text-amber-500" />
+            </div>
           </div>
-          <div className="text-2xl font-bold text-orange-600">{stats.totalBurned.toLocaleString()} kcal</div>
-          <p className="text-xs text-slate-400 mt-1">Basal + Exercícios</p>
+          <div className="text-2xl font-bold text-orange-500">{stats.totalBurned.toLocaleString()} kcal</div>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Basal + Exercícios</p>
         </div>
       </div>
 
@@ -215,90 +223,103 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         
         {/* Saldo Sem Exercício */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Saldo (Sem Exercício)</h3>
-            <Ban className={`h-4 w-4 ${stats.basalBalance > 0 ? 'text-red-400' : 'text-green-400'}`} />
+            <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                <TrendingDown className={`h-5 w-5 text-red-400`} />
+            </div>
           </div>
-          <div className={`text-2xl font-bold ${stats.basalBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
+          <div className={`text-2xl font-bold ${stats.basalBalance > 0 ? 'text-red-500' : 'text-green-500'}`}>
             {stats.basalBalance > 0 ? '+' : ''}{stats.basalBalance.toLocaleString()} kcal
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-400 mt-1 font-medium">
             Ingestão vs. TMB (Sedentário)
           </p>
         </div>
 
         {/* Saldo Com Exercício */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Saldo (Real / Com Treino)</h3>
-            <Activity className={`h-4 w-4 ${stats.calorieBalance > 0 ? 'text-red-500' : 'text-green-500'}`} />
+             <div className="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                <TrendingUp className={`h-5 w-5 text-red-400`} />
+            </div>
           </div>
-          <div className={`text-2xl font-bold ${stats.calorieBalance > 0 ? 'text-red-600' : 'text-green-600'}`}>
+          <div className={`text-2xl font-bold ${stats.calorieBalance > 0 ? 'text-red-500' : 'text-green-500'}`}>
             {stats.calorieBalance > 0 ? '+' : ''}{stats.calorieBalance.toLocaleString()} kcal
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-             {stats.calorieBalance > 0 ? 'Superávit Total' : 'Déficit Total'}
+          <p className="text-xs text-slate-400 mt-1 font-medium">
+             Déficit Total
           </p>
         </div>
 
         {/* Projeção de Peso */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-2 opacity-10">
-             <Scale size={64} />
-          </div>
-          <div className="flex items-center justify-between pb-2">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-50">
+          <div className="flex items-center justify-between pb-4">
             <h3 className="text-sm font-medium text-slate-500">Projeção de Peso</h3>
-            <ScaleIcon weight={stats.weightChangeKg} />
+             <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center">
+                <Scale className="h-5 w-5 text-orange-400" />
+            </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900">
+          <div className="text-2xl font-bold text-slate-800">
             {stats.weightChangeKg > 0 ? '+' : ''}{stats.weightChangeKg.toFixed(2)} kg
           </div>
-          <p className="text-xs text-slate-400 mt-1">Baseado no Saldo Real (7000kcal/kg)</p>
+          <p className="text-xs text-slate-400 mt-1 font-medium">Baseado no Saldo Real (7000kcal/kg)</p>
         </div>
       </div>
 
       {/* 3. Main Chart */}
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Ingestão vs Gasto Diário</h3>
+      <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-50">
+          <h3 className="text-lg font-bold text-slate-800 mb-6">Ingestão vs Gasto Diário</h3>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
-                <YAxis tick={{fontSize: 12, fill: '#64748b'}} />
-                <Tooltip content={<CustomTooltip />} cursor={{fill: 'transparent'}} />
-                <Legend wrapperStyle={{paddingTop: '20px'}}/>
-                <Bar dataKey="ingestao" name="Ingestão (kcal)" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={60} />
-                <Bar dataKey="gasto" name="Gasto Total (kcal)" fill="#f59e0b" radius={[4, 4, 0, 0]} maxBarSize={60} />
+              <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barGap={8}>
+                <defs>
+                    <linearGradient id="colorGasto" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#f97316" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#f97316" stopOpacity={0.7}/>
+                    </linearGradient>
+                    <linearGradient id="colorIngestao" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.7}/>
+                    </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} dy={10} />
+                <YAxis tick={{fontSize: 12, fill: '#64748b'}} axisLine={false} tickLine={false} />
+                <Tooltip content={<CustomTooltip />} cursor={{fill: '#f8fafc'}} />
+                <Legend wrapperStyle={{paddingTop: '20px'}} iconType='square' />
+                <Bar dataKey="gasto" name="Gasto Total (kcal)" fill="url(#colorGasto)" radius={[6, 6, 6, 6]} maxBarSize={40} />
+                <Bar dataKey="ingestao" name="Ingestão (kcal)" fill="url(#colorIngestao)" radius={[6, 6, 6, 6]} maxBarSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
       </div>
 
       {/* 4. AI Insight Section */}
-      <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+      <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-indigo-900 flex items-center gap-2">
-            <BrainCircuit className="w-5 h-5" />
+          <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-orange-500" />
             Análise Nutricional Inteligente
           </h3>
           <button 
             onClick={handleAiAnalysis}
             disabled={isLoadingAi}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 text-sm font-medium shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 text-sm font-medium shadow-sm shadow-orange-200"
           >
-            {isLoadingAi ? <span className="animate-spin">⌛</span> : <Sparkles className="w-4 h-4" />}
+            {isLoadingAi ? <span className="animate-spin">⌛</span> : <BrainCircuit className="w-4 h-4" />}
             {isLoadingAi ? "Analisando..." : "Gerar Insights"}
           </button>
         </div>
         
         {aiInsight ? (
-          <div className="prose prose-sm max-w-none text-slate-700 bg-white p-4 rounded-lg shadow-sm">
+          <div className="prose prose-sm max-w-none text-slate-700 bg-orange-50/50 p-5 rounded-xl border border-orange-100">
             <div className="whitespace-pre-wrap leading-relaxed">{aiInsight}</div>
           </div>
         ) : (
-          <p className="text-indigo-400 text-sm italic">
+          <p className="text-slate-400 text-sm">
             Clique no botão para receber uma análise detalhada do seu progresso, macros e dicas personalizadas usando Inteligência Artificial.
           </p>
         )}
@@ -306,10 +327,3 @@ export const Dashboard: React.FC<DashboardProps> = ({ logs, settings, dateRange 
     </div>
   );
 };
-
-// Helper component for icon based on weight direction
-const ScaleIcon = ({ weight }: { weight: number }) => {
-    if (weight < -0.1) return <TrendingDown className="h-4 w-4 text-green-500" />;
-    if (weight > 0.1) return <TrendingUp className="h-4 w-4 text-red-500" />;
-    return <Activity className="h-4 w-4 text-slate-500" />;
-}

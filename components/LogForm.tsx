@@ -75,7 +75,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, existingLog, selectedD
             key={type}
             onClick={() => setActiveTab(type)}
             className={`flex-1 py-4 px-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors whitespace-nowrap
-              ${activeTab === type ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50' : 'text-slate-500 hover:bg-slate-50'}`}
+              ${activeTab === type ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50/50' : 'text-slate-500 hover:bg-slate-50'}`}
           >
             {getMealIcon(type)}
             {type}
@@ -91,7 +91,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, existingLog, selectedD
             <input
               type="number"
               min="0"
-              className="w-full p-2 border border-slate-200 rounded bg-slate-50 focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              className="w-full p-2 border border-slate-200 rounded bg-slate-50 focus:bg-white focus:ring-2 focus:ring-orange-500 outline-none transition-all"
               value={log.meals[activeTab].calories || ''}
               onChange={e => updateMeal(activeTab, 'calories', Number(e.target.value))}
               placeholder="0"
@@ -158,7 +158,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, existingLog, selectedD
         <div className="pt-4 flex justify-end">
             <button
                 onClick={handleSave}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium shadow-md transition-colors flex items-center gap-2"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium shadow-md shadow-orange-200 transition-colors flex items-center gap-2"
             >
                 <Save className="w-4 h-4" />
                 Salvar Lançamentos
