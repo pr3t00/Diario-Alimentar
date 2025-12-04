@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, PlusCircle, Settings as SettingsIcon, Calendar, Menu, Cloud, CloudOff } from 'lucide-react';
+import { LayoutDashboard, PlusCircle, Settings as SettingsIcon, Calendar, Menu, Cloud, CloudOff, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Dashboard } from './components/Dashboard';
 import { LogForm } from './components/LogForm';
 import { Settings } from './components/Settings';
@@ -23,6 +23,8 @@ const getDefaultDateRange = (): DateRange => {
     };
 };
 
+type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error';
+
 const App: React.FC = () => {
   // --- State ---
   const [activeTab, setActiveTab] = useState<'dashboard' | 'log' | 'settings'>('dashboard');
@@ -33,6 +35,15 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(false);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+
+  // Helper to show temporary status
+  const flashStatus = (status: SyncStatus) => {
+    setSyncStatus(status);
+    if (status === 'saved' || status === 'error') {
+      setTimeout(() => setSyncStatus('idle'), 3000);
+    }
+  };
 
   // --- Effects (Persistence) ---
   useEffect(() => {
@@ -56,12 +67,13 @@ const App: React.FC = () => {
                 localStorage.setItem('nutritrack_settings', JSON.stringify(remoteSettings));
             }
             if (remoteLogs && remoteLogs.length > 0) {
+                // Merge strategy: Remote wins if conflict, but here we just replace for simplicity
                 setLogs(remoteLogs);
                 localStorage.setItem('nutritrack_logs', JSON.stringify(remoteLogs));
             }
             setIsOnline(true);
         } catch (error) {
-            console.log("Running in offline/local mode or Firebase not configured.");
+            console.log("Modo offline ativado: Firebase não configurado ou inacessível.");
             setIsOnline(false);
         } finally {
             setIsLoading(false);
@@ -75,12 +87,13 @@ const App: React.FC = () => {
     // Optimistic update + Local Storage backup
     localStorage.setItem('nutritrack_settings', JSON.stringify(newSettings));
     
+    setSyncStatus('syncing');
     try {
         await saveUserSettings(getUserId(), newSettings);
-        alert("Configurações salvas na nuvem!");
+        flashStatus('saved');
         setIsOnline(true);
     } catch (e) {
-        alert("Salvo localmente. Configure o Firebase para salvar na nuvem.");
+        flashStatus('error');
         setIsOnline(false);
     }
     setActiveTab('dashboard');
@@ -94,12 +107,13 @@ const App: React.FC = () => {
     // Local backup
     localStorage.setItem('nutritrack_logs', JSON.stringify(updatedLogs));
 
+    setSyncStatus('syncing');
     try {
         await saveDayLog(getUserId(), newLog);
-        alert("Lançamento salvo na nuvem!");
+        flashStatus('saved');
         setIsOnline(true);
     } catch (e) {
-        alert("Salvo localmente. Configure o Firebase para salvar na nuvem.");
+        flashStatus('error');
         setIsOnline(false);
     }
     setActiveTab('dashboard');
@@ -115,13 +129,13 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     if (isLoading && logs.length === 0) {
-        return <div className="flex h-full items-center justify-center text-slate-400">Carregando dados...</div>;
+        return <div className="flex h-full items-center justify-center text-slate-400 gap-2"><RefreshCw className="animate-spin w-5 h-5"/> Carregando dados...</div>;
     }
 
     switch (activeTab) {
       case 'dashboard':
         return (
-            <div className="space-y-8">
+            <div className="space-y-8 animate-fade-in">
                 {/* Date Filter */}
                 <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
                     <h2 className="text-lg font-semibold text-slate-700 flex items-center gap-2">
@@ -131,14 +145,14 @@ const App: React.FC = () => {
                     <div className="flex gap-2 items-center">
                         <input 
                             type="date" 
-                            className="p-2 border border-slate-200 rounded-lg text-sm"
+                            className="p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 transition-colors"
                             value={dateRange.startDate}
                             onChange={(e) => setDateRange({...dateRange, startDate: e.target.value})}
                         />
                         <span className="text-slate-400">-</span>
                         <input 
                             type="date" 
-                            className="p-2 border border-slate-200 rounded-lg text-sm"
+                            className="p-2 border border-slate-200 rounded-lg text-sm outline-none focus:border-blue-500 transition-colors"
                             value={dateRange.endDate}
                             onChange={(e) => setDateRange({...dateRange, endDate: e.target.value})}
                         />
@@ -155,7 +169,7 @@ const App: React.FC = () => {
         );
       case 'log':
         return (
-            <div className="max-w-4xl mx-auto space-y-6">
+            <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
                  <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex items-center gap-4">
                     <label className="text-sm font-medium text-slate-700">Data do Lançamento:</label>
                     <input 
@@ -229,10 +243,23 @@ const App: React.FC = () => {
         </nav>
 
         <div className="mt-auto pt-6 border-t border-slate-100 space-y-4">
-           <div className="flex items-center gap-2 px-2 text-xs text-slate-400">
-                {isOnline ? <Cloud className="w-4 h-4 text-green-500" /> : <CloudOff className="w-4 h-4 text-orange-400" />}
-                {isOnline ? "Nuvem Conectada" : "Modo Offline"}
+           {/* Sync Status Indicator */}
+           <div className={`flex items-center gap-2 px-3 py-2 rounded text-xs font-medium transition-all
+                ${syncStatus === 'syncing' ? 'bg-blue-50 text-blue-600' : ''}
+                ${syncStatus === 'saved' ? 'bg-green-50 text-green-600' : ''}
+                ${syncStatus === 'error' ? 'bg-red-50 text-red-500' : ''}
+                ${syncStatus === 'idle' ? 'text-slate-400' : ''}
+           `}>
+                {syncStatus === 'syncing' && <><RefreshCw className="w-3 h-3 animate-spin" /> Sincronizando...</>}
+                {syncStatus === 'saved' && <><CheckCircle2 className="w-3 h-3" /> Salvo com sucesso</>}
+                {syncStatus === 'error' && <><AlertCircle className="w-3 h-3" /> Erro ao salvar</>}
+                {syncStatus === 'idle' && (
+                    isOnline 
+                    ? <><Cloud className="w-3 h-3 text-green-500" /> Nuvem Conectada</>
+                    : <><CloudOff className="w-3 h-3 text-orange-400" /> Modo Offline</>
+                )}
            </div>
+
            <div className="bg-blue-50 rounded-lg p-4">
               <p className="text-xs text-blue-600 font-semibold mb-1">TMB Atual</p>
               <p className="text-2xl font-bold text-blue-700">{settings.tmb} <span className="text-sm font-normal">kcal</span></p>
@@ -241,7 +268,7 @@ const App: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-x-hidden w-full">
+      <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-x-hidden w-full relative">
         {renderContent()}
       </main>
 

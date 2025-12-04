@@ -1,10 +1,43 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App' 
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
 
-// O código abaixo procura a div "root" no HTML e injeta o App dentro dela
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const setupDependencies = () => {
+  document.title = "NutriTrack AI";
+
+  const tailwindScript = document.createElement('script');
+  tailwindScript.src = "https://cdn.tailwindcss.com";
+  document.head.appendChild(tailwindScript);
+
+  const fontLink = document.createElement('link');
+  fontLink.href = "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap";
+  fontLink.rel = "stylesheet";
+  document.head.appendChild(fontLink);
+
+  const style = document.createElement('style');
+  style.innerHTML = `
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+  `;
+  document.head.appendChild(style);
+};
+
+setupDependencies();
+
+const container = document.getElementById('root');
+const rootElement = container || (() => {
+  const el = document.createElement('div');
+  el.id = 'root';
+  document.body.appendChild(el);
+  return el;
+})();
+
+const root = createRoot(rootElement);
+
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);
