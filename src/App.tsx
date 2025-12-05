@@ -120,14 +120,9 @@ const App: React.FC = () => {
   };
 
   const handleDeleteLog = async (date: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir o registro deste dia? Esta ação não pode ser desfeita.')) {
-        return;
-    }
-
+    // Optimistic update
     const updatedLogs = logs.filter(l => l.date !== date);
     setLogs(updatedLogs);
-    
-    // Local backup
     localStorage.setItem('nutritrack_logs', JSON.stringify(updatedLogs));
 
     setSyncStatus('syncing');
@@ -135,11 +130,12 @@ const App: React.FC = () => {
         await deleteDayLog(getUserId(), date);
         flashStatus('saved');
         setIsOnline(true);
-        // If we were on the log page for this date, go back to dashboard
+        // If we were viewing the log that was just deleted, go to dashboard
         if (activeTab === 'log' && selectedLogDate === date) {
             setActiveTab('dashboard');
         }
     } catch (e) {
+        // If fail, rollback could be implemented here, but for now just show error
         flashStatus('error');
         setIsOnline(false);
     }
@@ -195,7 +191,7 @@ const App: React.FC = () => {
                         logs={logs} 
                         dateRange={dateRange} 
                         onSelectDate={handleEditDate} 
-                        onDelete={handleDeleteLog}
+                        onDelete={handleDeleteLog} 
                     />
                 </div>
             </div>

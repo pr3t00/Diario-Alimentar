@@ -62,16 +62,20 @@ export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSel
                 <td className="px-6 py-4 hidden sm:table-cell text-amber-600">{totalF}g</td>
                 <td className="px-6 py-4 text-right flex justify-end gap-2">
                   <button 
-                    onClick={() => onDelete(log.date)}
-                    className="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded transition-colors"
-                    title="Excluir dia"
+                    onClick={() => {
+                        if(window.confirm('Tem certeza que deseja excluir o registro deste dia?')) {
+                            onDelete(log.date);
+                        }
+                    }}
+                    className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Excluir Registro"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                   <button 
                     onClick={() => onSelectDate(log.date)}
-                    className="text-orange-500 hover:text-orange-700 p-1 hover:bg-orange-100 rounded transition-colors"
-                    title="Editar dia"
+                    className="text-orange-500 hover:text-orange-700 p-2 hover:bg-orange-100 rounded-lg transition-colors"
+                    title="Editar Registro"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
