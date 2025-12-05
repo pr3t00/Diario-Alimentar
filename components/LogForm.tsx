@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { DayLog, MealType, Macros } from '../types';
-import { Save, Trash2, Dumbbell, Coffee, Sun, Moon, Cookie } from 'lucide-react';
+import { Plus, Save, Trash2, Dumbbell, Coffee, Sun, Moon, Cookie } from 'lucide-react';
 
 interface LogFormProps {
   onSave: (log: DayLog) => void;
-  onDelete: (date: string) => void;
   existingLog?: DayLog;
   selectedDate: string;
 }
@@ -22,7 +21,7 @@ const initialLog = (date: string): DayLog => ({
   exerciseCalories: 0
 });
 
-export const LogForm: React.FC<LogFormProps> = ({ onSave, onDelete, existingLog, selectedDate }) => {
+export const LogForm: React.FC<LogFormProps> = ({ onSave, existingLog, selectedDate }) => {
   const [log, setLog] = useState<DayLog>(initialLog(selectedDate));
   const [activeTab, setActiveTab] = useState<MealType>(MealType.BREAKFAST);
 
@@ -55,10 +54,6 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, onDelete, existingLog,
     onSave(log);
   };
 
-  const handleDelete = () => {
-    onDelete(selectedDate);
-  };
-
   const getMealIcon = (type: MealType) => {
     switch (type) {
         case MealType.BREAKFAST: return <Coffee className="w-4 h-4" />;
@@ -75,7 +70,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, onDelete, existingLog,
       </div>
 
       <div className="flex overflow-x-auto border-b border-slate-100">
-        {(Object.values(MealType) as MealType[]).map((type) => (
+        {Object.values(MealType).map((type) => (
           <button
             key={type}
             onClick={() => setActiveTab(type)}
@@ -160,16 +155,7 @@ export const LogForm: React.FC<LogFormProps> = ({ onSave, onDelete, existingLog,
            </div>
         </div>
 
-        <div className="pt-4 flex justify-end gap-3">
-            {existingLog && (
-                <button
-                    onClick={handleDelete}
-                    className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 border border-red-200"
-                >
-                    <Trash2 className="w-4 h-4" />
-                    Excluir
-                </button>
-            )}
+        <div className="pt-4 flex justify-end">
             <button
                 onClick={handleSave}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium shadow-md shadow-orange-200 transition-colors flex items-center gap-2"

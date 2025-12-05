@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DayLog, UserSettings, DateRange, Macros } from '../types';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Defs, LinearGradient } from 'recharts';
 import { Activity, Flame, Utensils, TrendingDown, TrendingUp, Sparkles, BrainCircuit, Dumbbell, BedDouble, Scale, Zap } from 'lucide-react';
 import { generateNutritionalInsight } from '../services/geminiService';
 

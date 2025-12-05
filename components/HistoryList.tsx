@@ -1,15 +1,14 @@
 import React from 'react';
 import { DayLog, DateRange, Macros } from '../types';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 
 interface HistoryListProps {
   logs: DayLog[];
   dateRange: DateRange;
   onSelectDate: (date: string) => void;
-  onDelete: (date: string) => void;
 }
 
-export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSelectDate, onDelete }) => {
+export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSelectDate }) => {
   const filteredLogs = logs
     .filter(log => log.date >= dateRange.startDate && log.date <= dateRange.endDate)
     .sort((a, b) => b.date.localeCompare(a.date)); // Newest first
@@ -60,18 +59,10 @@ export const HistoryList: React.FC<HistoryListProps> = ({ logs, dateRange, onSel
                 <td className="px-6 py-4 hidden sm:table-cell text-blue-600">{totalP}g</td>
                 <td className="px-6 py-4 hidden sm:table-cell text-green-600">{totalC}g</td>
                 <td className="px-6 py-4 hidden sm:table-cell text-amber-600">{totalF}g</td>
-                <td className="px-6 py-4 text-right flex justify-end gap-2">
-                  <button 
-                    onClick={() => onDelete(log.date)}
-                    className="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 rounded transition-colors"
-                    title="Excluir dia"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                <td className="px-6 py-4 text-right">
                   <button 
                     onClick={() => onSelectDate(log.date)}
-                    className="text-orange-500 hover:text-orange-700 p-1 hover:bg-orange-100 rounded transition-colors"
-                    title="Editar dia"
+                    className="text-orange-500 hover:text-orange-700 p-1 hover:bg-orange-100 rounded"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>

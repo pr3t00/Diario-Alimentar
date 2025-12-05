@@ -5,7 +5,7 @@ import { LogForm } from './components/LogForm';
 import { Settings } from './components/Settings';
 import { HistoryList } from './components/HistoryList';
 import { DayLog, UserSettings, DateRange } from './types';
-import { fetchUserData, saveDayLog, saveUserSettings, getUserId, deleteDayLog } from './services/firebase';
+import { fetchUserData, saveDayLog, saveUserSettings, getUserId } from './services/firebase';
 
 // Default initial state
 const DEFAULT_SETTINGS: UserSettings = {
@@ -119,32 +119,6 @@ const App: React.FC = () => {
     setActiveTab('dashboard');
   };
 
-  const handleDeleteLog = async (date: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir o registro deste dia? Esta ação não pode ser desfeita.')) {
-        return;
-    }
-
-    const updatedLogs = logs.filter(l => l.date !== date);
-    setLogs(updatedLogs);
-    
-    // Local backup
-    localStorage.setItem('nutritrack_logs', JSON.stringify(updatedLogs));
-
-    setSyncStatus('syncing');
-    try {
-        await deleteDayLog(getUserId(), date);
-        flashStatus('saved');
-        setIsOnline(true);
-        // If we were on the log page for this date, go back to dashboard
-        if (activeTab === 'log' && selectedLogDate === date) {
-            setActiveTab('dashboard');
-        }
-    } catch (e) {
-        flashStatus('error');
-        setIsOnline(false);
-    }
-  };
-
   const handleEditDate = (date: string) => {
       setSelectedLogDate(date);
       setActiveTab('log');
@@ -191,12 +165,7 @@ const App: React.FC = () => {
                 
                 <div className="mt-8">
                     <h3 className="text-lg font-bold text-slate-800 mb-4">Histórico do Período</h3>
-                    <HistoryList 
-                        logs={logs} 
-                        dateRange={dateRange} 
-                        onSelectDate={handleEditDate} 
-                        onDelete={handleDeleteLog}
-                    />
+                    <HistoryList logs={logs} dateRange={dateRange} onSelectDate={handleEditDate} />
                 </div>
             </div>
         );
@@ -212,12 +181,7 @@ const App: React.FC = () => {
                         onChange={(e) => setSelectedLogDate(e.target.value)}
                     />
                  </div>
-                <LogForm 
-                    onSave={handleSaveLog} 
-                    onDelete={handleDeleteLog} 
-                    existingLog={currentLog} 
-                    selectedDate={selectedLogDate} 
-                />
+                <LogForm onSave={handleSaveLog} existingLog={currentLog} selectedDate={selectedLogDate} />
             </div>
         );
       case 'settings':

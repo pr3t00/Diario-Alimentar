@@ -1,6 +1,6 @@
 // @ts-ignore
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, query } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, query } from 'firebase/firestore';
 import { DayLog, UserSettings } from '../types';
 
 // Configuração do Firebase fornecida pelo usuário
@@ -14,6 +14,7 @@ const firebaseConfig = {
 };
 
 // Inicializa o Firebase
+// Using @ts-ignore to bypass potential type definition issues with Firebase v9
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -72,16 +73,6 @@ export const saveDayLog = async (userId: string, log: DayLog) => {
     await setDoc(doc(db, 'users', userId, 'logs', log.date), log);
   } catch (error) {
     console.error("Erro ao salvar log diário:", error);
-    throw error;
-  }
-};
-
-// Exclui um log diário
-export const deleteDayLog = async (userId: string, date: string) => {
-  try {
-    await deleteDoc(doc(db, 'users', userId, 'logs', date));
-  } catch (error) {
-    console.error("Erro ao excluir log diário:", error);
     throw error;
   }
 };
