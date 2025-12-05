@@ -33,8 +33,17 @@ const rootElement = container || (() => {
 
 const root = createRoot(rootElement);
 
+// TESTE DE VIDA: Vamos desenhar um texto simples em vez do <App />
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <div style={{ padding: '50px', fontSize: '30px', color: 'red', fontFamily: 'sans-serif' }}>
+    <h1>O SISTEMA ESTÁ FUNCIONANDO!</h1>
+    <p>O problema está dentro do arquivo App.tsx</p>
+  </div>
 );
+
+// Comente a linha original para não dar erro
+// root.render(
+//   <React.StrictMode>
+//     <App />
+//   </React.StrictMode>
+// );
