@@ -2,9 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
+// Função para configurar estilos (Tailwind e Fontes) automaticamente
 const setupDependencies = () => {
-  document.title = "NutriTrack AI";
-
   const tailwindScript = document.createElement('script');
   tailwindScript.src = "https://cdn.tailwindcss.com";
   document.head.appendChild(tailwindScript);
@@ -16,16 +15,14 @@ const setupDependencies = () => {
 
   const style = document.createElement('style');
   style.innerHTML = `
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f3f4f6;
-    }
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
   `;
   document.head.appendChild(style);
 };
 
 setupDependencies();
 
+// Lógica para encontrar ou criar o elemento "root"
 const container = document.getElementById('root');
 const rootElement = container || (() => {
   const el = document.createElement('div');
