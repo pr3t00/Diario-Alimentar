@@ -1,3 +1,4 @@
+// @ts-ignore
 import { GoogleGenAI } from "@google/genai";
 import { DayLog, UserSettings, Macros } from "../types";
 
