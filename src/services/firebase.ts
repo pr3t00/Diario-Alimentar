@@ -16,20 +16,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Helper para obter ID único do dispositivo (ou recuperar o existente)
+// --- AQUI ESTÁ A MUDANÇA ---
+// Agora retorna sempre o mesmo ID. Celular e PC vão ver a mesma coisa.
 export const getUserId = (): string => {
-  let storedId = localStorage.getItem('nutritrack_userid');
-  if (!storedId) {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        storedId = crypto.randomUUID();
-    } else {
-        // Fallback simples para gerar um ID
-        storedId = Date.now().toString(36) + Math.random().toString(36).substring(2);
-    }
-    localStorage.setItem('nutritrack_userid', storedId);
-  }
-  return storedId;
+  return "usuario_principal";
 };
+// ---------------------------
 
 // Busca dados do usuário (Configurações e Logs)
 export const fetchUserData = async (userId: string) => {
