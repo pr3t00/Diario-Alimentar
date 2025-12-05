@@ -5,7 +5,7 @@ import { LogForm } from './components/LogForm';
 import { Settings } from './components/Settings';
 import { HistoryList } from './components/HistoryList';
 import { DayLog, UserSettings, DateRange } from './types';
-import { fetchUserData, saveDayLog, saveUserSettings, getUserId, deleteDayLog } from './services/firebase';
+import { fetchUserData, saveDayLog, saveUserSettings, getUserId, deleteDayLog, setUserId } from './services/firebase';
 
 // Default initial state
 const DEFAULT_SETTINGS: UserSettings = {
@@ -36,6 +36,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOnline, setIsOnline] = useState(false);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
+  const [currentUserId, setCurrentUserId] = useState<string>(getUserId());
 
   // Helper to show temporary status
   const flashStatus = (status: SyncStatus) => {
@@ -49,47 +50,64 @@ const App: React.FC = () => {
   useEffect(() => {
     const loadData = async () => {
         setIsLoading(true);
-        const userId = getUserId();
+        // Use state ID instead of direct getUserId call to allow reactivity
+        const userId = currentUserId; 
         
-        // Always try to load local backup first for speed
-        const localSettings = localStorage.getItem('nutritrack_settings');
-        const localLogs = localStorage.getItem('nutritrack_logs');
-        
-        if (localSettings) setSettings(JSON.parse(localSettings));
-        if (localLogs) setLogs(JSON.parse(localLogs));
+        // Always try to load local backup first for speed (if matches user)
+        const storedLocalId = localStorage.getItem('nutritrack_userid');
+        if (storedLocalId === userId) {
+            const localSettings = localStorage.getItem('nutritrack_settings');
+            const localLogs = localStorage.getItem('nutritrack_logs');
+            if (localSettings) setSettings(JSON.parse(localSettings));
+            if (localLogs) setLogs(JSON.parse(localLogs));
+        } else {
+            // New user ID loaded, clear old local state visually until fetch
+            setLogs([]);
+        }
 
         try {
             const { settings: remoteSettings, logs: remoteLogs } = await fetchUserData(userId);
             
-            // If we found data in cloud, it takes precedence or merges
+            // If we found data in cloud, it takes precedence
             if (remoteSettings) {
                 setSettings(remoteSettings);
                 localStorage.setItem('nutritrack_settings', JSON.stringify(remoteSettings));
             }
             if (remoteLogs && remoteLogs.length > 0) {
-                // Merge strategy: Remote wins if conflict, but here we just replace for simplicity
                 setLogs(remoteLogs);
                 localStorage.setItem('nutritrack_logs', JSON.stringify(remoteLogs));
             }
             setIsOnline(true);
         } catch (error) {
-            console.log("Modo offline ativado: Firebase não configurado ou inacessível.");
+            console.log("Modo offline ativado ou erro de conexão.");
             setIsOnline(false);
         } finally {
             setIsLoading(false);
         }
     };
     loadData();
-  }, []);
+  }, [currentUserId]);
 
-  const handleSaveSettings = async (newSettings: UserSettings) => {
+  const handleSaveSettings = async (newSettings: UserSettings, newUserId?: string) => {
+    // 1. Check User ID Change
+    if (newUserId && newUserId !== currentUserId) {
+        if(window.confirm('Ao alterar o ID, você mudará para outra conta. Seus dados atuais não serão perdidos, mas você deixará de vê-los até voltar o ID. Deseja continuar?')) {
+            setUserId(newUserId);
+            setCurrentUserId(newUserId); // Triggers useEffect to reload data
+            setActiveTab('dashboard');
+            return;
+        } else {
+            return; // Cancelled
+        }
+    }
+
+    // 2. Normal Settings Save
     setSettings(newSettings);
-    // Optimistic update + Local Storage backup
     localStorage.setItem('nutritrack_settings', JSON.stringify(newSettings));
     
     setSyncStatus('syncing');
     try {
-        await saveUserSettings(getUserId(), newSettings);
+        await saveUserSettings(currentUserId, newSettings);
         flashStatus('saved');
         setIsOnline(true);
     } catch (e) {
@@ -109,7 +127,7 @@ const App: React.FC = () => {
 
     setSyncStatus('syncing');
     try {
-        await saveDayLog(getUserId(), newLog);
+        await saveDayLog(currentUserId, newLog);
         flashStatus('saved');
         setIsOnline(true);
     } catch (e) {
@@ -127,7 +145,7 @@ const App: React.FC = () => {
 
     setSyncStatus('syncing');
     try {
-        await deleteDayLog(getUserId(), date);
+        await deleteDayLog(currentUserId, date);
         flashStatus('saved');
         setIsOnline(true);
         // If we were viewing the log that was just deleted, go to dashboard
@@ -135,7 +153,6 @@ const App: React.FC = () => {
             setActiveTab('dashboard');
         }
     } catch (e) {
-        // If fail, rollback could be implemented here, but for now just show error
         flashStatus('error');
         setIsOnline(false);
     }
